@@ -97,6 +97,6 @@ contract Donate {
         // 制限を更新します
         VirtualAccounts[index].restriction = block.timestamp;
         // 口座から口座主に送金します
-        require(token.transfer(msg.sender, VirtualAccounts[index].savingAmount), "The remittance process failed.");
+        require(token.transfer(msg.sender, VirtualAccounts[index].savingAmount * (0.83 * 10 ** 18)), "The remittance process failed.");
     }
 }
