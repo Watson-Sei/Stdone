@@ -24,17 +24,79 @@ interface IERC20 {
 }
 
 contract Donate {
-    address public owner;
-
-    IERC20 public token;
     
+    // 変数リスト
+    address public owner;
+    IERC20 public token;
+
+    // 仮想口座構造
+    struct VirtualAccount {
+        // 口座番号
+        uint id;
+        // 口座主アドレス
+        address owner;
+        // 口座貯金額
+        uint savingAmount;
+        // 口座引き出し制限開始日
+        uint256 restriction;
+    }
+
+    // 全仮想口座
+    VirtualAccount[] public VirtualAccounts;
+    
+    // コントラクトの初期化
     constructor(address _token) {
+        // コントラクトの管理者
         owner = msg.sender;
+        // トークンのコントラクトアドレスをERC20規格に渡す
         token = IERC20(_token);
     }
 
-    function getname() public view returns (string memory) {
-        return "Hello";
+    // 口座開設関数
+    function Opening() public {
+        // 全口座数から被らない口座番号を設定
+        uint id = VirtualAccounts.length;
+        // 全口座に新口座情報を追加
+        VirtualAccounts.push(VirtualAccount({
+            id: id,
+            // 口座開設リクエストを送信したユーザーのアドレスを登録
+            owner: msg.sender,
+            savingAmount: 0,
+            //　口座開設時のタイムスタンプを設定
+            restriction: block.timestamp
+        }));
     }
-    
+
+    // 口座に振り込み
+    function Transfer(uint _id) public payable {
+        uint index = 0;
+        for (uint i = 0; i < VirtualAccounts.length; i++) {
+            // 送金する口座のindexを取得する
+            if (VirtualAccounts[i].id == _id) {
+                index = i;
+                break;
+            }
+        }
+        // 口座コントラクトに対して送金された金額をsavingAmountに追加する
+        VirtualAccounts[index].savingAmount += msg.value;
+    }
+
+    // 口座から引き出し
+    function Withdrawal(uint _id) public payable {
+        uint index = 0;
+        for (uint i = 0; i < VirtualAccounts.length; i++) {
+            if (VirtualAccounts[i].id == _id) {
+                index = i;
+                break;
+            }
+        }
+        // 前回の制限から1ヶ月経っているかを確認
+        require(block.timestamp >= 30 days + VirtualAccounts[index].restriction, "It hasn't been a month.");
+        // 口座主であるか確認
+        require(VirtualAccounts[index].owner == msg.sender, "This account is not a subscriber.");
+        // 制限を更新します
+        VirtualAccounts[index].restriction = block.timestamp;
+        // 口座から口座主に送金します
+        require(token.transfer(msg.sender, VirtualAccounts[index].savingAmount), "The remittance process failed.");
+    }
 }
