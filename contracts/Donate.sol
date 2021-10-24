@@ -24,6 +24,8 @@ interface IERC20 {
 }
 
 contract Donate {
+
+    event AccountId(uint);
     
     // 変数リスト
     address public owner;
@@ -52,6 +54,9 @@ contract Donate {
         token = IERC20(_token);
     }
 
+    // 口座配列取得関数
+    function getVirtualAccounts() public view returns (VirtualAccount[] memory) { return VirtualAccounts; }
+
     // 口座開設関数
     function Opening() public {
         // 全口座数から被らない口座番号を設定
@@ -65,6 +70,7 @@ contract Donate {
             //　口座開設時のタイムスタンプを設定
             restriction: block.timestamp
         }));
+        emit AccountId(id);
     }
 
     // 口座に振り込み
