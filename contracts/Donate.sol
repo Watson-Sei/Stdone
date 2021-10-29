@@ -1,6 +1,8 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.3;
 
+import "hardhat/console.sol";
+
 // https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.0/contracts/token/ERC20/IERC20.sol
 interface IERC20 {
     function totalSupply() external view returns (uint);
@@ -26,6 +28,7 @@ interface IERC20 {
 contract Donate {
 
     event AccountId(uint);
+    event AccountBalance(uint);
     
     // 変数リスト
     address public owner;
@@ -56,6 +59,20 @@ contract Donate {
 
     // 口座配列取得関数
     function getVirtualAccounts() public view returns (VirtualAccount[] memory) { return VirtualAccounts; }
+    // 自身の口座残高の取得
+    function getVirtualAccountBalance() public view returns (uint) {
+        uint index = 0;
+        for (uint i = 0; i < VirtualAccounts.length; i++) {
+            if (VirtualAccounts[i].owner == msg.sender) {
+                index = i;
+                break;
+            }
+        }
+        if (index == 0) {
+            return 0;
+        }
+        return VirtualAccounts[index].savingAmount;
+    }
 
     // 口座開設関数
     function Opening() public {
@@ -77,7 +94,6 @@ contract Donate {
     function Transfer(uint _id) public payable {
         uint index = 0;
         for (uint i = 0; i < VirtualAccounts.length; i++) {
-            // 送金する口座のindexを取得する
             if (VirtualAccounts[i].id == _id) {
                 index = i;
                 break;

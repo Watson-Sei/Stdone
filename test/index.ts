@@ -6,7 +6,7 @@ import { ethers } from "hardhat";
 describe("Donate", function () {
   let token: Contract;
   let donate: Contract;
-  let AccountId: number;
+  let AccountId: string | undefined;
 
   // Token and Donateコントラクトデプロイテスト
   beforeEach(async (): Promise<void> => {
@@ -30,11 +30,19 @@ describe("Donate", function () {
     const [owner] = await ethers.getSigners();
     let tx: ContractTransaction = await donate.connect(owner).Opening();
     let receipt: ContractReceipt = await tx.wait();
-    AccountId = Number(receipt.events?.filter((x) => {return x.event == "AccountId"})[0].data);
+    AccountId = receipt.events?.filter((x) => {return x.event == "AccountId"})[0].data;
     assert((await donate.getVirtualAccounts()).length > 0, "Failed to open an account")
   });
 
   // 特定の口座に送金テスト
   it("Donation Test", async (): Promise<void> => {
+    const [owner, guest1] = await ethers.getSigners();
+    await donate.connect(owner).Opening();
+    await token.transfer(guest1.address, "0x" + (10000 * 10 ** 18).toString(16));
+    const beforeBalnace = await donate.connect(owner).getVirtualAccountBalance();
+    let tx = await donate.connect(guest1).Transfer(AccountId, {value: "0x" + (100 * 10 ** 18).toString(16)});
+    await tx.wait();
+    const afterBalance = await donate.connect(owner).getVirtualAccountBalance();
+    expect(afterBalance).to.equal(beforeBalnace);
   })
 });
