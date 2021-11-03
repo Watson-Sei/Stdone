@@ -28,7 +28,6 @@ interface IERC20 {
 contract Donate {
     
     event AccountId(uint);
-    event AccountBalance(uint);
     
     // 変数リスト
     address public owner;
@@ -68,16 +67,13 @@ contract Donate {
                 break;
             }
         }
-        if (index == 0) {
-            return 0;
-        }
         return VirtualAccounts[index].savingAmount;
     }
 
     // 口座開設関数
     function Opening() public {
         // 全口座数から被らない口座番号を設定
-        uint id = VirtualAccounts.length + 1;
+        uint id = VirtualAccounts.length;
         // 全口座に新口座情報を追加
         VirtualAccounts.push(VirtualAccount({
             id: id,
@@ -91,7 +87,7 @@ contract Donate {
     }
 
     // 口座に振り込み
-    function Transfer(uint _id) public payable {
+    function Transfers(uint _id) external payable {
         uint index = 0;
         for (uint i = 0; i < VirtualAccounts.length; i++) {
             if (VirtualAccounts[i].id == _id) {
@@ -112,6 +108,7 @@ contract Donate {
                 break;
             }
         }
+        require(token.balanceOf(address(this)) >= VirtualAccounts[index].savingAmount, "The balance is insufficient");
         // 前回の制限から1ヶ月経っているかを確認
         require(block.timestamp >= 30 days + VirtualAccounts[index].restriction, "It hasn't been a month.");
         // 口座主であるか確認
