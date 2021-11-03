@@ -7,6 +7,8 @@ describe("Donate", function () {
   let token: Contract;
   let donate: Contract;
   let AccountId: string | undefined;
+  let sendAmount = "0x" + (1000 * 10 ** 18).toString(16);
+  let defaultAmount = "0x" + (10000 * 10 ** 18).toString(16);
 
   // Token and Donateコントラクトデプロイテスト
   beforeEach(async (): Promise<void> => {
@@ -20,9 +22,16 @@ describe("Donate", function () {
 
   // Donateコントラクトに送金テスト
   it("Should send coin correctly", async (): Promise<void> => {
-    await token.transfer(donate.address, "0x" + (10000 * 10 ** 18).toString(16));
+    await token.transfer(donate.address, defaultAmount);
     const balance = (await token.balanceOf(donate.address)).toString();
-    assert(balance >= 0, "No balance on contract")
+    assert(balance > 0, "No balance on contract")
+  });
+
+  // Donateコントラクトに送金テスト
+  it("Should send coin correctly", async (): Promise<void> => {
+    await token.transfer(donate.address, defaultAmount);
+    const balance = (await token.balanceOf(donate.address)).toString();
+    assert(balance > 0, "No balance on contract")
   });
 
   // 口座開設テスト
@@ -35,14 +44,20 @@ describe("Donate", function () {
   });
 
   // 特定の口座に送金テスト
-  it("Donation Test", async (): Promise<void> => {
+  it("Transfer money to a specific account", async (): Promise<void> => {
     const [owner, guest1] = await ethers.getSigners();
-    await donate.connect(owner).Opening();
-    await token.transfer(guest1.address, "0x" + (10000 * 10 ** 18).toString(16));
-    const beforeBalnace = await donate.connect(owner).getVirtualAccountBalance();
-    let tx = await donate.connect(guest1).Transfer(AccountId, {value: "0x" + (100 * 10 ** 18).toString(16)});
-    await tx.wait();
-    const afterBalance = await donate.connect(owner).getVirtualAccountBalance();
-    expect(afterBalance).to.equal(beforeBalnace);
-  })
+    await token.transfer(owner.address, defaultAmount);
+    assert((await token.balanceOf(owner.address)).toString() > 0, "Poverty");
+    let tx: ContractTransaction = await donate.connect(guest1).Opening();
+    let receipt: ContractReceipt = await tx.wait()
+    AccountId = receipt.events?.filter((x) => {return x.event == "AccountId"})[0].data;
+    let beforeContractBalance = (await token.balanceOf(donate.address)).toString();
+    let beforeAccountBalnace = (await donate.connect(guest1).getVirtualAccountBalance()).toString();
+    let tx1: ContractTransaction = await donate.connect(guest1).Transfer(AccountId, {value: sendAmount});
+    await tx1.wait();
+    let afterContractBalance = (await token.balanceOf(donate.address)).toString();
+    let afterAccountBalnace = (await donate.connect(guest1).getVirtualAccountBalance()).toString();
+    console.log(afterContractBalance, beforeContractBalance);
+    console.log(afterAccountBalnace, beforeAccountBalnace);
+  });
 });

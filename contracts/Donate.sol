@@ -26,7 +26,7 @@ interface IERC20 {
 }
 
 contract Donate {
-
+    
     event AccountId(uint);
     event AccountBalance(uint);
     
@@ -77,7 +77,7 @@ contract Donate {
     // 口座開設関数
     function Opening() public {
         // 全口座数から被らない口座番号を設定
-        uint id = VirtualAccounts.length;
+        uint id = VirtualAccounts.length + 1;
         // 全口座に新口座情報を追加
         VirtualAccounts.push(VirtualAccount({
             id: id,
@@ -119,6 +119,6 @@ contract Donate {
         // 制限を更新します
         VirtualAccounts[index].restriction = block.timestamp;
         // 口座から口座主に送金します
-        require(token.transfer(msg.sender, VirtualAccounts[index].savingAmount * (0.83 * 10 ** 18)), "The remittance process failed.");
+        require(token.transfer(msg.sender, VirtualAccounts[index].savingAmount * 83 / 100), "The remittance process failed.");
     }
 }
