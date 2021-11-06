@@ -100,22 +100,24 @@ contract Donate {
     }
 
     // 口座から引き出し
-    function Withdrawal(uint _id) public payable {
+    function Withdrawal() public {
         uint index = 0;
         for (uint i = 0; i < VirtualAccounts.length; i++) {
-            if (VirtualAccounts[i].id == _id) {
+            if (VirtualAccounts[i].owner == msg.sender) {
                 index = i;
                 break;
             }
         }
-        require(token.balanceOf(address(this)) >= VirtualAccounts[index].savingAmount, "The balance is insufficient");
+        require(address(this).balance >= VirtualAccounts[index].savingAmount, "The balance is insufficient");
         // 前回の制限から1ヶ月経っているかを確認
-        require(block.timestamp >= 30 days + VirtualAccounts[index].restriction, "It hasn't been a month.");
+        require(block.timestamp >= 1 seconds + VirtualAccounts[index].restriction, "It hasn't been a month.");
         // 口座主であるか確認
         require(VirtualAccounts[index].owner == msg.sender, "This account is not a subscriber.");
-        // 制限を更新します
+        // 時間制限を更新します
         VirtualAccounts[index].restriction = block.timestamp;
         // 口座から口座主に送金します
-        require(token.transfer(msg.sender, VirtualAccounts[index].savingAmount * 83 / 100), "The remittance process failed.");
+        (bool success, ) = payable(msg.sender).call{value: (VirtualAccounts[index].savingAmount * 83 / 100)}("");
+        require(success, "Failed to WithDrawal ERC20");
+        VirtualAccounts[index].savingAmount -= 0;
     }
 }

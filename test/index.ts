@@ -54,4 +54,32 @@ describe("Donate", function () {
     assert(afterAccountBalance > beforeAccountBalance, "There's a balance in your account");
     assert(afterContractBalance, beforeContractBalance, "Failed to transfer money to the contract");
   });
+
+  // 口座から残高を引き出す
+  it("Withdrawal moeny", async (): Promise<void> => {
+    const [owner, guest1] = await ethers.getSigners();
+    await token.transfer(owner.address, defaultAmount);
+    assert((await token.balanceOf(owner.address)).toString() > 0, "Poverty");
+    let tx: ContractTransaction = await donate.connect(guest1).Opening();
+    let receipt: ContractReceipt = await tx.wait()
+    AccountId = receipt.events?.filter((x) => {return x.event == "AccountId"})[0].data;
+    let beforeAccountBalance = (await donate.connect(guest1).getVirtualAccountBalance()).toString();
+    let beforeContractBalance = (await token.provider.getBalance(donate.address)).toString();
+    let tx1: ContractTransaction = await donate.connect(owner).Transfers(AccountId, {value: sendAmount});
+    await tx1.wait();
+    let afterAccountBalance = (await donate.connect(guest1).getVirtualAccountBalance()).toString();
+    let afterContractBalance = (await token.provider.getBalance(donate.address)).toString();
+    assert(afterAccountBalance > beforeAccountBalance, "There's a balance in your account");
+    assert(afterContractBalance, beforeContractBalance, "Failed to transfer money to the contract");
+    await sleep(1 * 1000);
+    beforeContractBalance = (await token.provider.getBalance(donate.address)).toString();
+    let tx2: ContractTransaction = await donate.connect(guest1).Withdrawal();
+    await tx2.wait();
+    afterContractBalance = (await token.provider.getBalance(donate.address)).toString();
+    assert(Number(afterContractBalance) < Number(beforeContractBalance), "Failed to Withdrawal ERC20");
+  });
 });
+
+function sleep(ms: number) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
