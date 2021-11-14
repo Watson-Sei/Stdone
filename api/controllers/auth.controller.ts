@@ -86,7 +86,6 @@ class AuthController {
             })
             // アカウントは存在するがTwitchが未リンクの場合
             if (!isTwitchLink) {
-                console.log('Twitch Linkが必要です。')
                 try {
                     const accessToken = await auth.linkTwitch(userInfo);
                     res.status(200).json({
@@ -99,7 +98,6 @@ class AuthController {
                 }
             // アカウントとTwitchのリンクが確認できる場合
             } else {
-                console.log('既にTwitchLink済みです')
                 try {
                     const accessToken = await auth.loginTwitch(userInfo);
                     res.status(200).json({
