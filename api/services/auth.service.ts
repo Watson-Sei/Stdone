@@ -36,6 +36,36 @@ class AuthService {
         const accessToken = await jwt.signAccessToken(payload);
         return accessToken;
     }
+    static async registerYoutube(payload: any) {
+        const user = await prisma.user.create({
+            data: {
+                twitch_id: null,
+                youtube_id: String(payload.id),
+                email: payload.email,
+                username: payload.name
+            }
+        })
+        console.log('create youtube link user: ', user)
+        const accessToken = jwt.signAccessToken(user)
+        return accessToken;
+    }
+    static async linkYoutube(payload: any) {
+        const user = await prisma.user.update({
+            where: {
+                email: payload.email,
+            },
+            data: {
+                youtube_id: String(payload.id)
+            }
+        })
+        console.log('update youtube link user: ', user)
+        const accessToken = jwt.signAccessToken(user);
+        return accessToken;
+    }
+    static async loginYoutube(payload: any) {
+        const accessToken = await jwt.signAccessToken(payload);
+        return accessToken;
+    }
 }
 
 module.exports = AuthService;
