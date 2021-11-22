@@ -21,5 +21,15 @@ module.exports = {
                 resolve(token)
             })
         })
+    },
+    verifyAccessToken(token: string) {
+        return new Promise((resolve, reject) => {
+            jwt.verify(token, String(accessTokenSecretKey), (err, payload) => {
+                if (err) {
+                    return reject(CreateError.Unauthorized);
+                }
+                resolve(payload)
+            })
+        })
     }
 }

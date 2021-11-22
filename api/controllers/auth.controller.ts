@@ -5,7 +5,7 @@ require('dotenv').config();
 import { PrismaClient } from '@prisma/client';
 const prisma = new PrismaClient();
 const auth = require('../services/auth.service');
-import createError from 'http-errors';
+const createError = require('http-errors')
 
 const twitchClientId = process.env.TWITCH_CLIENT_ID;
 const twitchClientSecret = process.env.TWITCH_CLIENT_SECRET;
@@ -13,14 +13,14 @@ const twitchClientSecret = process.env.TWITCH_CLIENT_SECRET;
 const youtubeClientId = process.env.YOUTUBE_CLIENT_ID;
 const youtubeClientSecret = process.env.YOUTUBE_CLIENT_SECRET;
 
-const twitchredirectUri = "http://localhost:5000/auth/twitch/callback"
-const youtuberedirectUri = "http://localhost:5000/auth/youtube/callback"
+const twitchredirectUri = "http://localhost:3000/signin?id=twitch"
+const youtuberedirectUri = "http://localhost:3000/signin?id=youtube"
 
 class AuthController {
-    static twitch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        console.log(twitchClientId)
-        res.redirect(`https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${twitchredirectUri}&response_type=code&scope=user:read:email`)
-    }
+    // static twitch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    //     console.log(twitchClientId)
+    //     res.redirect(`https://id.twitch.tv/oauth2/authorize?client_id=${twitchClientId}&redirect_uri=${twitchredirectUri}&response_type=code&scope=user:read:email`)
+    // }
     static twitchCallback = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         let token: string = '';
         let userInfo: any = null;
@@ -67,7 +67,7 @@ class AuthController {
         if (!isAccount) {
             try {
                 const accessToken = await auth.registerTwitch(userInfo);
-                res.status(200).json({
+                return res.status(200).json({
                     status: true,
                     message: 'Access Token generation successded.',
                     accessToken: accessToken
@@ -92,7 +92,7 @@ class AuthController {
             if (!isTwitchLink) {
                 try {
                     const accessToken = await auth.linkTwitch(userInfo);
-                    res.status(200).json({
+                    return res.status(200).json({
                         status: true,
                         message: 'Access Token generation successded.',
                         accessToken: accessToken
@@ -104,7 +104,7 @@ class AuthController {
             } else {
                 try {
                     const accessToken = await auth.loginTwitch(userInfo);
-                    res.status(200).json({
+                    return res.status(200).json({
                         status: true,
                         message: 'Access Token generation successded.',
                         accessToken: accessToken
@@ -115,10 +115,10 @@ class AuthController {
             }
         }
     }
-    static youtube = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-        console.log(youtubeClientId);
-        res.redirect(`https://accounts.google.com/o/oauth2/auth?client_id=${youtubeClientId}&redirect_uri=${youtuberedirectUri}&response_type=code&scope=https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email`);
-    }
+    // static youtube = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    //     console.log(youtubeClientId);
+    //     res.redirect(`https://accounts.google.com/o/oauth2/auth?client_id=${youtubeClientId}&redirect_uri=${youtuberedirectUri}&response_type=code&scope=https://www.googleapis.com/auth/youtube https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email`);
+    // }
     static youtubeCallback = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         let token: string = '';
         let userInfo: any = null;
@@ -166,7 +166,7 @@ class AuthController {
         if (!isAccount) {
             try {
                 const accessToken = await auth.registerYoutube(userInfo);
-                res.status(200).json({
+                return res.status(200).json({
                     status: true,
                     message: 'Access Token generation successded.',
                     accessToken: accessToken
@@ -191,7 +191,7 @@ class AuthController {
             if (!isYoutubeLink) {
                 try {
                     const accessToken = await auth.linkYoutube(userInfo);
-                    res.status(200).json({
+                    return res.status(200).json({
                         status: true,
                         message: 'Access Token generation successded.',
                         accessToken: accessToken
@@ -203,7 +203,7 @@ class AuthController {
             } else {
                 try {
                     const accessToken = await auth.loginYoutube(userInfo);
-                    res.status(200).json({
+                    return res.status(200).json({
                         status: true,
                         message: 'Access Token generation successded.',
                         accessToken: accessToken
@@ -212,6 +212,17 @@ class AuthController {
                     next(createError(e.statusCode, e.message))
                 }
             }
+        }
+    }
+    static me = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        try {
+            const user = await auth.me(req.user)
+            return res.status(200).json({
+                status: true,
+                user
+            })
+        } catch (e: any) {
+            return next(createError(e.statusCode, e.message));
         }
     }
 }

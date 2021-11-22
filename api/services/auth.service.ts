@@ -66,6 +66,15 @@ class AuthService {
         const accessToken = await jwt.signAccessToken(payload);
         return accessToken;
     }
+    static async me(user: any) {
+        const resultUser = await prisma.user.findFirst({
+            where: {
+                email: user.email,
+                username: user.username
+            }
+        })
+        return resultUser;
+    }
 }
 
 module.exports = AuthService;
