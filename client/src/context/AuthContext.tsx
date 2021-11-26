@@ -53,7 +53,6 @@ export const AuthProvider: FC<Props> = ({ children, ...props }) => {
             setUser(undefined)
             removeCookie('access_token')
         }
-        console.log('Cookieチェック', user)
         setLoading(false)
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
