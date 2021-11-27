@@ -12,7 +12,8 @@ class AuthService {
                 twitch_id: String(payload.id),
                 youtube_id: null,
                 email: payload.email,
-                username: payload.login
+                username: payload.login,
+                address: null
             }
         })
         console.log('create twitch link user: ', user)
@@ -42,7 +43,8 @@ class AuthService {
                 twitch_id: null,
                 youtube_id: String(payload.id),
                 email: payload.email,
-                username: payload.name
+                username: payload.name,
+                address: null
             }
         })
         console.log('create youtube link user: ', user)
@@ -71,6 +73,17 @@ class AuthService {
             where: {
                 email: user.email,
                 username: user.username
+            }
+        })
+        return resultUser;
+    }
+    static async updateWallet(user: any, address: string) {
+        const resultUser = await prisma.user.update({
+            where: {
+                email: user.payload.email
+            },
+            data: {
+                address: address
             }
         })
         return resultUser;

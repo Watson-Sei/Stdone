@@ -16,4 +16,5 @@ model User {
   youtube_id String?
   email String @unique
   username String
+  address String?
 }

@@ -7,6 +7,7 @@ export interface User {
     youtube_id?: string;
     email?: string;
     username?: string;
+    address?: string;
 }
 
 export interface IAuth {
