@@ -17,6 +17,9 @@ import InfoIcon from '@mui/icons-material/Info';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
 import styled from '@emotion/styled';
 import { useWindowSize } from '../../hooks/use-window';
+import { useCookies } from 'react-cookie';
+import { useAuthContext } from '../../context/AuthContext';
+import { useHistory } from 'react-router-dom';
 
 const RighteousFont = styled(Typography)`
     color: black;
@@ -29,10 +32,32 @@ const LoginButton = styled(Button)`
     background: #16449A;
 `;
 
+const ButtonDisableStyle = styled.button`
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    outline: none;
+    padding: 0;
+    appearance: none;
+`;
+
 export const Header: React.VFC = () => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const {width, height} = useWindowSize();
     const [drawerState, setDrawerState] = useState<boolean>(false);
+    const [,, removeCookie] = useCookies();
+    const { user, setUser } = useAuthContext();
+    const history = useHistory();
+
+    const handleLogout = async () => {
+        removeCookie('access_token');
+        setUser(undefined);
+        window.location.href = '/signin';
+    }
+
+    const move = (path: string) => {
+        history.push(path);
+    };
 
     return (
         <React.Fragment>
@@ -45,15 +70,42 @@ export const Header: React.VFC = () => {
                         <div style={{ flexGrow: 1 }}></div>
                         {Number(width) >= 500 ? (
                             <>
-                                <Typography style={{ color: 'black', margin: '0 20px' }}>
-                                    使い方
-                                </Typography>
-                                <Typography style={{ color: 'black', margin: '0 20px' }}>
-                                    対応通貨
-                                </Typography>
-                                <LoginButton variant="contained" style={{ margin: '0 20px' }}>
-                                    ログイン
-                                </LoginButton>
+                                <ButtonDisableStyle onClick={() => move('/')}>
+                                    <Typography style={{ color: 'black', margin: '0 20px' }}>
+                                        使い方
+                                    </Typography>
+                                </ButtonDisableStyle>
+                                <ButtonDisableStyle onClick={() => move('/')}>
+                                    <Typography style={{ color: 'black', margin: '0 20px' }}>
+                                        対応通貨
+                                    </Typography>
+                                </ButtonDisableStyle>
+                                {user ? (
+                                    <>
+                                        <ButtonDisableStyle onClick={() => move('/profile')}>
+                                            <Typography style={{ color: 'black', margin: '0 20px' }}>
+                                                プロフィール
+                                            </Typography>
+                                        </ButtonDisableStyle>
+                                        <LoginButton 
+                                            variant="contained" 
+                                            style={{ margin: '0 20px' }}
+                                            onClick={() => handleLogout()}
+                                        >
+                                            ログアウト
+                                        </LoginButton>
+                                    </>
+                                ) : (
+                                    <>
+                                        <LoginButton 
+                                            variant="contained" 
+                                            style={{ margin: '0 20px' }}
+                                            onClick={() => move('/signin')}
+                                        >
+                                            ログイン
+                                        </LoginButton>
+                                    </>
+                                )}
                             </>
                         ) : (
                             <>
@@ -75,7 +127,7 @@ export const Header: React.VFC = () => {
                                     <Box sx={{ width: 200 }} role="presentation">
                                         {/* 使い方 */}
                                         <List>
-                                            <ListItem button>
+                                            <ListItem button onClick={() => move('/')}>
                                                 <ListItemIcon>
                                                     <InfoIcon />
                                                 </ListItemIcon>
@@ -84,7 +136,7 @@ export const Header: React.VFC = () => {
                                         </List>
                                         {/* 対応通貨 */}
                                         <List>
-                                            <ListItem button>
+                                            <ListItem button onClick={() => move('/')}>
                                                 <ListItemIcon>
                                                     <LocalAtmIcon />
                                                 </ListItemIcon>
@@ -92,9 +144,32 @@ export const Header: React.VFC = () => {
                                             </ListItem>
                                         </List>
                                         <List>
-                                            <LoginButton variant="contained" style={{ margin: '0 50px' }}>
-                                                ログイン
-                                            </LoginButton>
+                                        {user ? (
+                                            <>
+                                                <ButtonDisableStyle onClick={() => move('/profile')}>
+                                                    <Typography style={{ color: 'black', margin: '0 20px' }}>
+                                                        プロフィール
+                                                    </Typography>
+                                                </ButtonDisableStyle>
+                                                <LoginButton 
+                                                    variant="contained" 
+                                                    style={{ margin: '0 45px' }}
+                                                    onClick={() => handleLogout()}
+                                                >
+                                                    ログアウト
+                                                </LoginButton>
+                                            </>
+                                        ) : (
+                                            <>
+                                                <LoginButton 
+                                                    variant="contained" 
+                                                    style={{ margin: '0 50px' }}
+                                                    onClick={() => move('/signin')}
+                                                >
+                                                    ログイン
+                                                </LoginButton>
+                                            </>
+                                        )}
                                         </List>
                                     </Box>
                                 </Drawer>

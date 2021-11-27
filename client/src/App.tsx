@@ -13,22 +13,22 @@ import { Profile } from './components/pages/profile';
 function App() {
   return (
     <AuthProvider>
-      <header>
-        <Header />
-      </header>
-      <main>
         <BrowserRouter>
-          <div style={{ margin: '2em' }}>
-            <Switch>
-              <Route exact path="/" component={Home} />
-              <PublicRoute path="/signin" component={Signin} exact={undefined} />
-              <Route exact path="/:number([0-9]{1,3})" component={Error} />
-              <PrivateRoute exact path="/profile" component={Profile} />
-              <Route path="/" component={Donate} />
-            </Switch>
-          </div>
+          <header>
+            <Header />
+          </header>
+          <main>
+            <div style={{ margin: '2em' }}>
+              <Switch>
+                <Route exact path="/" component={Home} />
+                <PrivateRoute path="/profile" component={Profile} exact />
+                <PublicRoute path="/signin" component={Signin} exact={undefined} />
+                <Route exact path="/:number([0-9]{1,3})" component={Error} />
+                <Route path="/" component={Donate} />
+              </Switch>
+            </div>
+          </main>
         </BrowserRouter>
-      </main>
     </AuthProvider>
   );
 }
