@@ -15,6 +15,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import InfoIcon from '@mui/icons-material/Info';
 import LocalAtmIcon from '@mui/icons-material/LocalAtm';
+import PersonIcon from '@mui/icons-material/Person';
 import styled from '@emotion/styled';
 import { useWindowSize } from '../../hooks/use-window';
 import { useCookies } from 'react-cookie';
@@ -68,7 +69,7 @@ export const Header: React.VFC = () => {
                             Stdone
                         </RighteousFont>
                         <div style={{ flexGrow: 1 }}></div>
-                        {Number(width) >= 500 ? (
+                        {Number(width) >= 700 ? (
                             <>
                                 <ButtonDisableStyle onClick={() => move('/')}>
                                     <Typography style={{ color: 'black', margin: '0 20px' }}>
@@ -124,7 +125,7 @@ export const Header: React.VFC = () => {
                                     open={drawerState}
                                     onClose={() => setDrawerState(false)}
                                 >
-                                    <Box sx={{ width: 200 }} role="presentation">
+                                    <Box sx={{ width: 250 }} role="presentation">
                                         {/* 使い方 */}
                                         <List>
                                             <ListItem button onClick={() => move('/')}>
@@ -146,14 +147,17 @@ export const Header: React.VFC = () => {
                                         <List>
                                         {user ? (
                                             <>
-                                                <ButtonDisableStyle onClick={() => move('/profile')}>
-                                                    <Typography style={{ color: 'black', margin: '0 20px' }}>
+                                                <ListItem button onClick={() => move('/profile')}>
+                                                    <ListItemIcon>
+                                                        <PersonIcon />
+                                                    </ListItemIcon>
+                                                    <Typography style={{ color: 'black' }}>
                                                         プロフィール
                                                     </Typography>
-                                                </ButtonDisableStyle>
+                                                </ListItem>
                                                 <LoginButton 
                                                     variant="contained" 
-                                                    style={{ margin: '0 45px' }}
+                                                    style={{ margin: '20px 45px' }}
                                                     onClick={() => handleLogout()}
                                                 >
                                                     ログアウト
