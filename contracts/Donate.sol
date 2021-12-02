@@ -73,6 +73,7 @@ contract Donate {
         // require(token.approve(msg.sender, _amount), "Failed to allow.");
         // require(token.allowance(address(this), msg.sender) >= _amount, "Insuficient Allowance");
         require(token.transferFrom(msg.sender, address(this), _amount), "transfer Failed");
+        VirtualAccounts[_to].savingAmount += _amount;
     }
 
     // 口座引き出し
@@ -81,7 +82,8 @@ contract Donate {
         require(token.balanceOf(address(this)) >= VirtualAccounts[msg.sender].savingAmount, "The balance is insufficient");
         require(block.timestamp >= 1 seconds + VirtualAccounts[msg.sender].restriction, "It hasn't been a month.");
         VirtualAccounts[msg.sender].restriction = block.timestamp;
-        require(token.transfer(msg.sender, VirtualAccounts[msg.sender].savingAmount * 83 / 100), "Failed to transfer funds.");
+        require(token.approve(address(this), VirtualAccounts[msg.sender].savingAmount * 83 /100), "Failed to allow.");
+        require(token.transferFrom(address(this) ,msg.sender, VirtualAccounts[msg.sender].savingAmount * 83 / 100), "Failed to transfer funds.");
         VirtualAccounts[msg.sender].savingAmount -= 0;
     }
 }
