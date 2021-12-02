@@ -12,4 +12,7 @@ router.get('/youtube/callback', user.youtubeCallback);
 
 router.get('/me', auth, user.me);
 
+// Update Wallet Address
+router.put('/me/wallet', auth, user.wallet);
+
 module.exports = router;
