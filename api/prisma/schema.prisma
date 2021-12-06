@@ -17,4 +17,5 @@ model User {
   email String @unique
   username String
   address String?
+  is_account Boolean @default(false)
 }

@@ -8,6 +8,7 @@ export interface User {
     email?: string;
     username?: string;
     address?: string;
+    is_account?: boolean;
 }
 
 export interface IAuth {

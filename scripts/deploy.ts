@@ -3,8 +3,7 @@
 //
 // When running the script with `npx hardhat run <script>` you'll find the Hardhat
 // Runtime Environment's members available in the global scope.
-import { BigNumber } from "@ethersproject/bignumber";
-import { ethers, waffle } from "hardhat";
+import { ethers } from "hardhat";
 
 async function main() {
   // Hardhat always runs the compile task when running scripts with its command
@@ -15,40 +14,36 @@ async function main() {
   // await hre.run('compile');
 
   // We get the contract to deploy
-  const [deployer] = await ethers.getSigners();
+  const [owner, addr1, addr2] = await ethers.getSigners();
+  
+  // Deploy Token 
+  const Token = await ethers.getContractFactory("Token");
+  const token = await Token.deploy();
+  await token.deployed();
+  console.log("Token deployed to:", token.address);
 
-  console.log(
-    "Deploying contracts with the account:",
-    deployer.address
-  );
+  // Amount Value
+  const defaultAmount = "0x" + (1000 * 10 ** 18).toString(16);
+  const sendAmount = "0x" + (10 * 10 ** 18).toString(16);
 
-  const JPYCToken = await ethers.getContractFactory("Token");
-  const jpycToekn = await JPYCToken.deploy();
+  // Transfer Token
+  await token.transfer(owner.address, defaultAmount);
+  console.log(`${owner.address}: `,(await token.balanceOf(owner.address)).toString());
+  await token.transfer(addr1.address, defaultAmount);
+  console.log(`${addr1.address}: `,(await token.balanceOf(addr1.address)).toString());
+  await token.transfer(addr2.address, defaultAmount);
+  console.log(`${addr2.address}: `,(await token.balanceOf(addr2.address)).toString());
 
-  await jpycToekn.deployed();
-
-  console.log("Token deployed to:", jpycToekn.address);
-
+  // Deploy Donate
   const Donate = await ethers.getContractFactory("Donate");
-  const donate = await Donate.deploy(jpycToekn.address);
-
+  const donate = await Donate.connect(owner).deploy(token.address);
   await donate.deployed();
-
   console.log("Donate deployed to:", donate.address);
-
-  // Donate Contractの残高が0であれば送金する
-  const donatebalance = (await jpycToekn.balanceOf(donate.address)).toString();
-  console.log(donatebalance);
-  if (Number(donatebalance) <= 0) {
-    await jpycToekn.transfer(donate.address, "0x" + (1000 * 10 ** 18).toString(16));
-    const donatebalance = (await jpycToekn.balanceOf(donate.address)).toString();
-    console.log(donatebalance)
-  }
 }
 
 // We recommend this pattern to be able to use async/await everywhere
 // and properly handle errors.
 main().catch((error) => {
   console.error(error);
-  process.exitCode = 1;
+  process.exit(1);
 });

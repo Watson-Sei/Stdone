@@ -14,5 +14,7 @@ router.get('/me', auth, user.me);
 
 // Update Wallet Address
 router.put('/me/wallet', auth, user.wallet);
+// Update Contract Account
+router.put('/me/account', auth, user.account);
 
 module.exports = router;

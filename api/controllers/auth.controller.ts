@@ -233,6 +233,14 @@ class AuthController {
             return next(createError(e.statusCode, e.message));
         }
     }
+    static account = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        try {
+            const user = await auth.updateIsAccount(req.user)
+            return res.status(200).json({status: true, user});
+        } catch (e: any) {
+            return next(createError(e.statusCode, e.message));
+        }
+    }
 }
 
 module.exports = AuthController;

@@ -71,12 +71,12 @@ export const Header: React.VFC = () => {
                         <div style={{ flexGrow: 1 }}></div>
                         {Number(width) >= 700 ? (
                             <>
-                                <ButtonDisableStyle onClick={() => move('/')}>
+                                <ButtonDisableStyle onClick={() => move('/#usage')}>
                                     <Typography style={{ color: 'black', margin: '0 20px' }}>
                                         使い方
                                     </Typography>
                                 </ButtonDisableStyle>
-                                <ButtonDisableStyle onClick={() => move('/')}>
+                                <ButtonDisableStyle onClick={() => move('/#support')}>
                                     <Typography style={{ color: 'black', margin: '0 20px' }}>
                                         対応通貨
                                     </Typography>
@@ -128,7 +128,7 @@ export const Header: React.VFC = () => {
                                     <Box sx={{ width: 250 }} role="presentation">
                                         {/* 使い方 */}
                                         <List>
-                                            <ListItem button onClick={() => move('/')}>
+                                            <ListItem button onClick={() => move('/#usage')}>
                                                 <ListItemIcon>
                                                     <InfoIcon />
                                                 </ListItemIcon>
@@ -137,7 +137,7 @@ export const Header: React.VFC = () => {
                                         </List>
                                         {/* 対応通貨 */}
                                         <List>
-                                            <ListItem button onClick={() => move('/')}>
+                                            <ListItem button onClick={() => move('/#support')}>
                                                 <ListItemIcon>
                                                     <LocalAtmIcon />
                                                 </ListItemIcon>
