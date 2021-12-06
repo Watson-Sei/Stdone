@@ -88,6 +88,17 @@ class AuthService {
         })
         return resultUser;
     }
+    static async updateIsAccount(user: any) {
+        const resultUser = await prisma.user.update({
+            where: {
+                email: user.payload.email
+            },
+            data: {
+                is_account: true
+            }
+        })
+        return resultUser;
+    }
 }
 
 module.exports = AuthService;
