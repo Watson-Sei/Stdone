@@ -24,7 +24,7 @@ function App() {
                 <PrivateRoute path="/profile" component={Profile} exact />
                 <PublicRoute path="/signin" component={Signin} exact={undefined} />
                 <Route exact path="/:number([0-9]{1,3})" component={Error} />
-                <Route path="/" component={Donate} />
+                <Route path="/:username" component={Donate} />
               </Switch>
             </div>
           </main>
