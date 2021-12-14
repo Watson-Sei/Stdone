@@ -84,6 +84,6 @@ contract Donate {
         VirtualAccounts[msg.sender].restriction = block.timestamp;
         require(token.approve(address(this), VirtualAccounts[msg.sender].savingAmount * 83 /100), "Failed to allow.");
         require(token.transferFrom(address(this) ,msg.sender, VirtualAccounts[msg.sender].savingAmount * 83 / 100), "Failed to transfer funds.");
-        VirtualAccounts[msg.sender].savingAmount -= 0;
+        VirtualAccounts[msg.sender].savingAmount = 0;
     }
 }

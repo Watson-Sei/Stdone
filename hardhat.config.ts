@@ -17,12 +17,12 @@ task("accounts", "Prints the list of accounts", async (taskArgs, hre) => {
 const config: HardhatUserConfig = {
   solidity: "0.8.4",
   networks: {
-    hardhat: {
-      mining: {
-        auto: false,
-        interval: 1000,
-      }
-    },
+    // hardhat: {
+    //   mining: {
+    //     auto: false,
+    //     interval: 1000,
+    //   }
+    // },
     ropsten: {
       url: process.env.ROPSTEN_URL || "",
       accounts:

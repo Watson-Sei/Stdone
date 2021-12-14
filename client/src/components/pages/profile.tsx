@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { useAuthContext } from '../../context/AuthContext';
 import styled from '@emotion/styled';
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useCookies } from 'react-cookie';
 import { useWallet } from '../../hooks/use-web3';
 import Donate from '../../contracts/Donate.json';
@@ -252,6 +252,27 @@ export const Profile: React.VFC = () => {
         }
     }
 
+    // 引き出し
+    const WithdrawalHandle = async () => {
+        await connectWeb3();
+        if (user?.address?.toUpperCase() === walletAddress.toUpperCase()) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner(0);
+            const contract = new ethers.Contract("0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9", Donate.abi, signer);
+            try {
+                let tx: ContractTransaction = await contract.Withdrawal()
+                await tx.wait()
+                console.log('引き出し成功しました')
+                const balance = (await contract.getVirtualAccountBalance()).toString();
+                const finalBalance = (balance > 0 ? (balance / (10 ** 18)) : balance)
+                setAccountBalance(finalBalance)
+            } catch (error: any) {
+                console.log('引き出しに失敗しました')
+                console.log('error:',error.message)
+            }
+        }
+    }
+
     // 初回のみ実行
     useEffect(() => {
         (async() => {
@@ -335,6 +356,9 @@ export const Profile: React.VFC = () => {
                                                     <RevenueAmount className="commission">{accountBalance * 83 / 100}</RevenueAmount>
                                                 </WithdrawalContent>
                                             </RevenueContent>
+                                            <Button disabled={accountBalance < 1000} onClick={() => WithdrawalHandle()} variant="contained" style={{ marginTop: '13%'}}>
+                                                引き出し
+                                            </Button>
                                         </ContentBox>
                                         <Note>
                                             ※振り込み額とは総額から手数料を引いた実際に受け取れる金額です。

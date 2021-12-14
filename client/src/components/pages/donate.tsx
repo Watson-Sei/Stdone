@@ -139,6 +139,34 @@ const PreviewBox = styled(Box)`
     border-radius: 15px;
 `;
 
+const GifBox = styled.img`
+    height: 170px;
+    display: block;
+    margin: 0 auto;
+`;
+
+const DetailText = styled(Typography)`
+    margin-top: 25px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    -webkit-text-stroke-color: black;
+    -webkit-text-stroke-width: 0.5px;
+    text-align: center;
+    text-shadow: 1px 2px 3px #808080;
+`;
+
+const MessageText = styled(Typography)`
+    margin-top: 15px;
+    font-size: 18px;
+    font-weight: bold;
+    color: white;
+    -webkit-text-stroke-color: #16449A;
+    -webkit-text-stroke-width: 0.5px;
+    text-align: center;
+    text-shadow: 1px 2px 3px #808080;
+`;
+
 const HistoryBox = styled(Box)`
     width: 100%;
     height: 360px;
@@ -317,7 +345,11 @@ export const Donate: React.VFC = () => {
                     </SettingBox>
                 </LeftBox>
                 <RightBox>
-                    <PreviewBox></PreviewBox>
+                    <PreviewBox>
+                        <GifBox src={`${process.env.PUBLIC_URL}/thankcat.gif`} alt="" />
+                        <DetailText>&#123;username&#125; donated &#123;coin&#125;&#123;amount&#125;</DetailText>
+                        <MessageText>&#123;message&#125;</MessageText>
+                    </PreviewBox>
                     <HistoryBox />
                 </RightBox>
             </DonateBox>
