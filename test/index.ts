@@ -72,6 +72,7 @@ describe("Donate", function () {
     await tx.wait(1);
     assert(Number((await token.balanceOf(donate.address)).toString()) === 170000000000000000, "The balance of the contract did not match.");
     assert(Number((await token.balanceOf(addr1.address)).toString()) === 830000000000000000, "The balance of the account did not match.");
+    console.log((await donate.connect(addr1).getVirtualAccountBalance()).toString())
   });
 });
 

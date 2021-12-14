@@ -1,7 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { useAuthContext } from '../../context/AuthContext';
 import styled from '@emotion/styled';
-import { Box, Typography } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 import { useCookies } from 'react-cookie';
 import { useWallet } from '../../hooks/use-web3';
 import Donate from '../../contracts/Donate.json';
@@ -182,8 +182,6 @@ const RevenueAmount = styled.div`
     }
 `;
 
-
-
 interface Window {
     ethereum: any;
 }
@@ -225,6 +223,7 @@ export const Profile: React.VFC = () => {
             try {
                 let tx: ContractTransaction = await contract.Opening()
                 await tx.wait()
+                console.log('口座作成が成功しました。')
                 // 問題なく口座が開設されたのでis_accountをtrueに更新する
                 fetch(`http://localhost:5000/auth/me/account`, {
                     method: 'PUT',
@@ -237,14 +236,38 @@ export const Profile: React.VFC = () => {
                 .then(async (data) => {
                     setUser(data.user)
                     try {
-                        const balance = (await contract.getVirtualAccountBalance()).toString()
-                        setAccountBalance(balance);
+                        const balance = (await contract.getVirtualAccountBalance()).toString();
+                        const finalBalance = (balance > 0 ? (balance / (10 ** 18)) : balance)
+                        setAccountBalance(finalBalance);
                     } catch (e: any) {
+                        console.log('取得に失敗')
                         setAccountBalance(undefined);
                     } 
                 })
             } catch (error: any) {
                 // 処理を取り消す
+                console.log('口座作成に失敗しました。')
+                console.log('error:',error.message)
+            }
+        }
+    }
+
+    // 引き出し
+    const WithdrawalHandle = async () => {
+        await connectWeb3();
+        if (user?.address?.toUpperCase() === walletAddress.toUpperCase()) {
+            const provider = new ethers.providers.Web3Provider(window.ethereum);
+            const signer = provider.getSigner(0);
+            const contract = new ethers.Contract("0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9", Donate.abi, signer);
+            try {
+                let tx: ContractTransaction = await contract.Withdrawal()
+                await tx.wait()
+                console.log('引き出し成功しました')
+                const balance = (await contract.getVirtualAccountBalance()).toString();
+                const finalBalance = (balance > 0 ? (balance / (10 ** 18)) : balance)
+                setAccountBalance(finalBalance)
+            } catch (error: any) {
+                console.log('引き出しに失敗しました')
                 console.log('error:',error.message)
             }
         }
@@ -260,13 +283,14 @@ export const Profile: React.VFC = () => {
                 const contract = new ethers.Contract("0xDc64a140Aa3E981100a9becA4E685f962f0cF6C9", Donate.abi, signer);
                 try {
                     const balance = (await contract.getVirtualAccountBalance()).toString()
-                    setAccountBalance(balance)
+                    const finalBalance = (balance > 0 ? (balance / (10 ** 18)) : balance)
+                    setAccountBalance(finalBalance);
                 } catch (error: any) {
-                    console.log('情報取れませんでした')
                     setAccountBalance(undefined)
                 }
             }
         })()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [walletAddress]);
 
     return (
@@ -329,9 +353,12 @@ export const Profile: React.VFC = () => {
                                                 </CommissionContent>
                                                 <WithdrawalContent>
                                                     <RevenueTitle className="commission">振り込み額</RevenueTitle>
-                                                    <RevenueAmount className="commission">8,300</RevenueAmount>
+                                                    <RevenueAmount className="commission">{accountBalance * 83 / 100}</RevenueAmount>
                                                 </WithdrawalContent>
                                             </RevenueContent>
+                                            <Button disabled={accountBalance < 1000} onClick={() => WithdrawalHandle()} variant="contained" style={{ marginTop: '13%'}}>
+                                                引き出し
+                                            </Button>
                                         </ContentBox>
                                         <Note>
                                             ※振り込み額とは総額から手数料を引いた実際に受け取れる金額です。

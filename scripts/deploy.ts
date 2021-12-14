@@ -23,8 +23,7 @@ async function main() {
   console.log("Token deployed to:", token.address);
 
   // Amount Value
-  const defaultAmount = "0x" + (1000 * 10 ** 18).toString(16);
-  const sendAmount = "0x" + (10 * 10 ** 18).toString(16);
+  const defaultAmount = "0x" + (10000 * 10 ** 18).toString(16);
 
   // Transfer Token
   await token.transfer(owner.address, defaultAmount);
