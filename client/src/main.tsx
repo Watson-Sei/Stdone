@@ -7,20 +7,26 @@ import {
   Route
 } from 'react-router-dom';
 import Home from './pages/home';
-import Login from './pages/login';
 import Header from './layouts/header';
+import { RecoilRoot } from 'recoil';
+import Profile from './pages/profile';
+import { Private } from './routes/private';
 
 ReactDOM.render(
   <React.StrictMode>
-    <BrowserRouter>
-      <Header />
-      <main>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/" element={<Home />} />
-        </Routes>
-      </main>
-    </BrowserRouter>
+    <RecoilRoot>
+      <BrowserRouter>
+        <Header />
+        <main>
+          <Routes>
+            <Route path="/profile" element={<Private />}>
+              <Route index element={<Profile />} />
+            </Route>
+            <Route path="/" element={<Home />} />
+          </Routes>
+        </main>
+      </BrowserRouter>
+    </RecoilRoot>
   </React.StrictMode>,
   document.getElementById('root')
 )

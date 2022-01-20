@@ -8,9 +8,6 @@ module.exports = {
       width: {
         '128': '32rem',
       },
-      top: {
-        '-1': '-1px'
-      }
     },
   },
   plugins: [],
