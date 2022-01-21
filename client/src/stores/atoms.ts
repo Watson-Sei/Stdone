@@ -20,3 +20,9 @@ export const walletProviderState = atom({
     default: '',
     effects_UNSTABLE: [persistAtom],
 });
+
+export const accountBalanceState = atom({
+    key: 'accountBalance',
+    default: 0,
+    effects_UNSTABLE: [persistAtom],
+})
