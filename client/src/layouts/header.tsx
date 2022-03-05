@@ -24,6 +24,8 @@ export default function Header() {
     const [modalIsOpen, setIsOpen] = useState(false);
     const {connectWallet, walletAddress} = useWallet();
 
+    const { disconnectWallet } = useWallet();
+
     return (
         <Disclosure as="nav" className="bg-white">
             {({open}) => (
@@ -81,6 +83,13 @@ export default function Header() {
                                                     aria-current={undefined}
                                                 >
                                                     Profile
+                                                </a>
+                                                <a
+                                                    onClick={() => disconnectWallet()}
+                                                    className='text-white bg-blue-600 px-3 py-2 rounded-md text-sm font-medium cursor-pointer'
+                                                    aria-current={undefined}
+                                                >
+                                                    Logout
                                                 </a>
                                             </>
                                         ) : (
