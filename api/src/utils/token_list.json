@@ -1,0 +1,18 @@
+{
+    "TokenInfo": [
+        {
+            "symbol": "WETH",
+            "address": "0x71C95911E9a5D330f4D621842EC243EE1343292e",
+            "icon": "https://assets.coingecko.com/coins/images/2518/small/weth.png?1628852295",
+            "decimals": 18,
+            "min": "0.001"
+        },
+        {
+            "symbol": "USDC",
+            "address": "0x8464135c8F25Da09e49BC8782676a84730C318bC",
+            "icon": "https://assets.coingecko.com/coins/images/6319/small/USD_Coin_icon.png?1547042389",
+            "decimals": 18,
+            "min": "1"
+        }
+    ]
+}

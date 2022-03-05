@@ -1,13 +1,24 @@
 import {ethers} from 'ethers';
+import { useState } from 'react';
 import { useEffect } from 'react';
 import { useWallet } from '../../hooks/useWallet';
 
 export default function Profile() {
 
-    const {isAccountBalance, walletAddress, chainId, accountBalance, openAccount} = useWallet();
+    const {isAccountBalance, walletAddress, chainId, accountBalance, CreateAccount} = useWallet();
+    const [username, setUsername] = useState<String>('null');
+    const [email, setEmail] = useState<String>('未登録');
 
     useEffect(() => {
         isAccountBalance();
+        fetch(`${import.meta.env.VITE_API_URL}/user/findPublicAddress?publicAddress=${walletAddress}`)
+            .then(response => response.json())
+            .then(data => {
+                setUsername(data.users[0].username)
+                if (data.users[0].email) {
+                    setEmail(data.users[0].email)
+                }
+            })
     }, [walletAddress, chainId])
 
     return (
@@ -19,8 +30,8 @@ export default function Profile() {
                         基本情報
                     </div>
                     <div className="w-full bg-gray-200 p-8 rounded-md">
-                        <span className="text-xl font-bold text-gray-800">UserName: </span>NullName<br/>
-                        <span className="text-xl font-bold text-gray-800">E-mail: </span>abc@gmail.com
+                        <span className="text-xl font-bold text-gray-800">UserName: </span>{username}<br/>
+                        <span className="text-xl font-bold text-gray-800">E-mail: </span>{email}
                     </div>
                 </div>
                 {/* ウォレット */}
@@ -43,7 +54,7 @@ export default function Profile() {
                     <div className="w-full bg-gray-200 p-8 rounded-md">
                         {accountBalance === -1 ? (
                             <>
-                                <button onClick={() => openAccount()}>
+                                <button onClick={() => CreateAccount()}>
                                     口座開設申請
                                 </button>
                             </>

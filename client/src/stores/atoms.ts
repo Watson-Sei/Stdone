@@ -25,4 +25,10 @@ export const accountBalanceState = atom({
     key: 'accountBalance',
     default: 0,
     effects_UNSTABLE: [persistAtom],
-})
+});
+
+export const accessTokenState = atom({
+    key: 'accessToken',
+    default: '',
+    effects_UNSTABLE: [persistAtom],
+});

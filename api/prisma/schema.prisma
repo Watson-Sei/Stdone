@@ -12,10 +12,9 @@ datasource db {
 
 model User {
   id Int @id @default(autoincrement())
-  twitch_id String?
-  youtube_id String?
-  email String @unique
-  username String
-  address String?
-  is_account Boolean @default(false)
+  createdAt DateTime @default(now())
+  nonce Int
+  publicAddress String @unique
+  username String @unique
+  isContract Boolean @default(false)
 }

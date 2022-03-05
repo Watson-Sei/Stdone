@@ -11,5 +11,5 @@ export default defineConfig({
     outDir: '../public',
     emptyOutDir: true,
   },
-  plugins: [react()]
+  plugins: [react()],
 })

@@ -2,32 +2,31 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "./src/index.ts",
   "scripts": {
-    "start": "ts-node index.ts",
+    "start": "ts-node ./src/index.ts",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "@types/cors": "2.8.12",
     "@types/express": "4.17.13",
-    "@types/node": "16.11.6",
-    "prisma": "3.4.1",
-    "ts-node": "10.4.0",
-    "typescript": "4.4.4"
+    "@types/jsonwebtoken": "8.5.8",
+    "@types/node": "17.0.18",
+    "@types/uuid": "8.3.4",
+    "prisma": "3.6.0",
+    "typescript": "4.5.5"
   },
   "dependencies": {
-    "@prisma/client": "3.4.1",
-    "@types/http-errors": "1.8.1",
-    "@types/jsonwebtoken": "8.5.5",
-    "axios": "0.24.0",
+    "@prisma/client": "3.6.0",
+    "@types/cors": "2.8.12",
+    "@types/http-errors": "1.8.2",
     "cors": "2.8.5",
-    "dotenv": "10.0.0",
-    "express": "4.17.1",
-    "http-errors": "1.7.2",
+    "dotenv": "16.0.0",
+    "eth-sig-util": "3.0.1",
+    "ethereumjs-util": "7.1.4",
+    "http-errors": "2.0.0",
     "jsonwebtoken": "8.5.1",
-    "qs": "6.7.0"
+    "uuid": "8.3.2"
   }
 }

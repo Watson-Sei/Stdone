@@ -1,89 +1,84 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.3;
+pragma solidity ^0.8.0;
 
 import "hardhat/console.sol";
-
-// https://github.com/OpenZeppelin/openzeppelin-contracts/blob/v3.0.0/contracts/token/ERC20/IERC20.sol
-interface IERC20 {
-    function totalSupply() external view returns (uint);
-
-    function balanceOf(address account) external view returns (uint);
-
-    function transfer(address recipient, uint amount) external returns (bool);
-
-    function allowance(address owner, address spender) external view returns (uint);
-
-    function approve(address spender, uint amount) external returns (bool);
-
-    function transferFrom(
-        address sender,
-        address recipient,
-        uint amount
-    ) external returns (bool);
-
-    event Transfer(address indexed from, address indexed to, uint value);
-    event Approval(address indexed owner, address indexed spender, uint value);
-}
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
+import "./interfaces/IUniswapV2Factory.sol";
+import "./interfaces/IUniswapV2Router02.sol";
 
 contract Donate {
-    
-    // 変数リスト
+    // This contract owner address
     address public owner;
+    // ERC20 Standard Interface
     IERC20 public token;
+    // Address of Uniswap V2 Router
+    address public ROUTER02;
+    // Standard currency in contract
+    address public WETH;
 
-    // 仮想口座構造
+    // Account Struct
     struct VirtualAccount {
-        // 開設済みであれば1、未開設であれば0
         uint check;
-        // 口座主アドレス
         address owner;
-        // 口座貯金額
-        uint savingAmount;
-        // 口座引き出し制限開始日
+        uint256 savingAmount;
         uint256 restriction;
     }
 
-    // 全仮想口座
+    // Account Struct Array
     mapping(address => VirtualAccount) public VirtualAccounts;
 
-    // コントラクトの初期化
-    constructor(address _token) {
-        // コントラクト管理者
+    // Initialize
+    constructor(address _WETH, address _ROUTER02) {
         owner = msg.sender;
-        // トークンのコントラクトアドレスをERC20規格に渡す
-        token = IERC20(_token);
+        WETH = _WETH;
+        ROUTER02 = _ROUTER02;
     }
 
-    // リクエストユーザーの口座情報取得
-    function getVirtualAccountBalance() public view returns (uint) {
+    // get account balance
+    function getAccountBalance() public view returns (uint) {
         require(VirtualAccounts[msg.sender].check == 1, "There is no account associated with this address");
         return VirtualAccounts[msg.sender].savingAmount;
     }
 
-    // 口座開設関数
-    function Opening() public {
+    // make accounts
+    function CreateAccount() public {
         require(VirtualAccounts[msg.sender].check == 0, "Already have an account");
         VirtualAccount memory account = VirtualAccount(1, msg.sender, 0, block.timestamp);
         VirtualAccounts[msg.sender] = account;
     }
 
-    // 口座振り込み
-    function Transfers(address _to, uint256 _amount) public {
+    // deposit
+    function Deposit(address _to, address _tokenIn, uint256 _amountIn) public {
         require(VirtualAccounts[_to].check == 1, "The account at this address does not exist");
-        // require(token.approve(msg.sender, _amount), "Failed to allow.");
-        // require(token.allowance(address(this), msg.sender) >= _amount, "Insuficient Allowance");
-        require(token.transferFrom(msg.sender, address(this), _amount), "transfer Failed");
-        VirtualAccounts[_to].savingAmount += _amount;
+        IERC20(_tokenIn).transferFrom(msg.sender, address(this), _amountIn);
+        IERC20(_tokenIn).approve(ROUTER02, _amountIn);
+
+        address[] memory path;
+        if (_tokenIn == WETH) {
+            VirtualAccounts[_to].savingAmount += _amountIn;
+        } else {
+            path = new address[](2);
+            path[0] = _tokenIn;
+            path[1] = WETH;
+
+            (uint[] memory amount) = IUniswapV2Router(ROUTER02).swapExactTokensForTokens(
+                _amountIn, 
+                0, 
+                path, 
+                address(this),
+                block.timestamp
+            );
+            VirtualAccounts[_to].savingAmount += amount[1];
+        }
     }
 
-    // 口座引き出し
+    // withdrawals
     function Withdrawal() public payable {
         require(VirtualAccounts[msg.sender].check == 1, "The account at this address does not exist");
-        require(token.balanceOf(address(this)) >= VirtualAccounts[msg.sender].savingAmount, "The balance is insufficient");
-        require(block.timestamp >= 1 seconds + VirtualAccounts[msg.sender].restriction, "It hasn't been a month.");
+        require(IERC20(WETH).balanceOf(address(this)) >= VirtualAccounts[msg.sender].savingAmount, "The balance is insufficient");
         VirtualAccounts[msg.sender].restriction = block.timestamp;
-        require(token.approve(address(this), VirtualAccounts[msg.sender].savingAmount * 83 /100), "Failed to allow.");
-        require(token.transferFrom(address(this) ,msg.sender, VirtualAccounts[msg.sender].savingAmount * 83 / 100), "Failed to transfer funds.");
-        VirtualAccounts[msg.sender].savingAmount -= 0;
+        require(IERC20(WETH).approve(address(this), VirtualAccounts[msg.sender].savingAmount * 83 / 100), "Failed to allow.");
+        require(IERC20(WETH).transferFrom(address(this), msg.sender, VirtualAccounts[msg.sender].savingAmount * 83 / 100), "Failed to transfer funds.");
+        VirtualAccounts[msg.sender].savingAmount = 0;
     }
 }

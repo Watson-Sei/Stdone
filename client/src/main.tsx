@@ -11,6 +11,8 @@ import Header from './layouts/header';
 import { RecoilRoot } from 'recoil';
 import Profile from './pages/profile';
 import { Private } from './routes/private';
+import Donate from './pages/donate';
+import { IsAccount } from './routes/isAccount';
 
 ReactDOM.render(
   <React.StrictMode>
@@ -21,6 +23,10 @@ ReactDOM.render(
           <Routes>
             <Route path="/profile" element={<Private />}>
               <Route index element={<Profile />} />
+            </Route>
+            <Route path="/:number([0-9]{1,3})" element={<></>} />
+            <Route path="/:id" element={<IsAccount />}>
+              <Route index element={<Donate />} />
             </Route>
             <Route path="/" element={<Home />} />
           </Routes>
