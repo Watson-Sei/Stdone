@@ -41,3 +41,18 @@ export const authorization = async (req: express.Request, res: express.Response)
     })
     return res.status(200).json({access_token: accessToken});
 }
+
+export const validityVerify = async (req: express.Request, res: express.Response) => {
+    const { access_token } = req.body;
+    console.log('accesstoken:', access_token)
+    if (!access_token) {
+        return res.status(400).json({message: 'access_token undefined'})
+    }
+    jwt.verify(access_token, String(process.env.SECRET_KEY), (err: any, decode: any) => {
+        if (err) {
+            return res.status(400).json({message: 'access_token is invalid'})
+        } else {
+            return res.status(200).json({message: 'access_token is valid'})
+        }
+    })
+}

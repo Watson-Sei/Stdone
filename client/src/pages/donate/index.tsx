@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { useWallet } from "../../hooks/useWallet";
 import { useParams } from "react-router-dom";
 import { ethers } from "ethers";
-import BigNumber from 'bignumber.js';
 
 const customStyles = {
     content: {
@@ -90,6 +89,10 @@ export default function Donate(): JSX.Element {
         <>
             <div className="w-full max-w-screen-md px-8 p-12 m-auto">
                 <div className="w-full shadow-lg p-3 sm:p-12">
+                    <div className="py-2 flex items-center">
+                        <img className="w-20 h-20 rounded-full" src="https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/s/371/3718143.jpg?1555511044" alt="" />
+                        <div className="text-xl font-bold ml-5">がつ</div>
+                    </div>
                     <div className="py-2">
                         <label htmlFor="small-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-600">USERNAME</label>
                         <input value={name} onChange={(event) => setName(event.target.value)} type="text" id="small-input" className="block p-2 w-full text-gray-900 bg-gray-50 rounded-lg border border-gray-300 sm:text-xs focus:ring-blue-500 focus:border-blue-500 dark:placeholder-gray-400 dark:text-black dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="山田　太郎"></input>

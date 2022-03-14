@@ -194,6 +194,36 @@ export const useWallet = () => {
         return;
     }
 
+    const handleSignMessage = async (
+        publicAddress: string | undefined,
+        nonce: string | undefined
+    ) => {
+        const { ethereum } = window;
+        const provider = new ethers.providers.Web3Provider(window.ethereum);
+        const signer = provider.getSigner();
+        const signature = await signer.signMessage(
+            `I am signing my one-time nonce: ${nonce}`
+        )
+        handleAuthenticate(publicAddress, signature);
+    }
+
+    const handleAuthenticate = async (
+        publicAddress: string | undefined,
+        signature: string | undefined
+    ) => {
+        await fetch(`${import.meta.env.VITE_API_URL}/auth/authorization`, {
+            body: JSON.stringify({publicAddress, signature}),
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            method: 'POST'
+        })
+            .then((response) => response.json())
+            .then((data) => {
+                setAccessToken(data.access_token)
+            })
+    }
+
     if (typeof window !== 'undefined') {
         useEffect(() => {
             let provider: any;
@@ -248,6 +278,7 @@ export const useWallet = () => {
         isAccountBalance,
         accountBalance,
         CreateAccount,
-        Deposit
+        Deposit,
+        handleSignMessage,
     }
 }

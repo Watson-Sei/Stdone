@@ -5,7 +5,7 @@ export const verify = async (req: express.Request, res: express.Response, next: 
     const header = req.headers.authorization;
     if (header !== undefined) {
         if (header.split(" ")[0] === "Bearer") {
-            jwt.verify(header.split(" ")[1], String(process.env.SECRET_KEY), (err: any, decode) => {
+            jwt.verify(header.split(" ")[1], String(process.env.SECRET_KEY), (err: any, decode: any) => {
                 if (err) {
                     return res.status(401).send(err.message);
                 } else {

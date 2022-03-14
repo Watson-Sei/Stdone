@@ -72,6 +72,25 @@ export const updaetIsContract = async (publicAddress: string) => {
             }
         })
     } catch (error: any) {
+        console.log('error')
+        return null;
+    }
+}
+
+export const updateProfile = async (publicAddress: string, username: string, email: string) => {
+    try {
+        const user = await prisma.user.update({
+            where: {
+                publicAddress: publicAddress
+            },
+            data: {
+                username: username,
+                email: email,
+            }
+        })
+        console.log(user);
+        return user;
+    } catch (error: any) {
         return null;
     }
 }

@@ -17,4 +17,5 @@ model User {
   publicAddress String @unique
   username String @unique
   isContract Boolean @default(false)
+  email String?
 }
