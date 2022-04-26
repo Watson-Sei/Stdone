@@ -2,7 +2,9 @@
   "name": "stdone",
   "version": "0.0.0",
   "scripts": {
-    "dev": "vite",
+    "dev": "vite --mode dev",
+    "stg": "vite --mode stg",
+    "prod": "vite --mode prod",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },

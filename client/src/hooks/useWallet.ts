@@ -88,7 +88,7 @@ export const useWallet = () => {
         try {
             await provider.request({
                 method: 'wallet_switchEthereumChain',
-                params: [{ chainId: '0x7a69' }]
+                params: [{ chainId: import.meta.env.VITE_CHAINID }]
             })
             const accounts = await provider.request({ method: 'eth_requestAccounts' });
             setWalletAddress(accounts[0])
@@ -257,10 +257,9 @@ export const useWallet = () => {
                 }
 
                 const handleChainChanged = async (chainId: string) => {
-                    console.log('チェーン切り替え');
                     provider.request({
                         method: 'wallet_switchEthereumChain',
-                        params: [{ chainId: '0x7a69' }]
+                        params: [{ chainId: import.meta.env.VITE_CHAINID }]
                     })
                     setWalletAddress(provider.request({method: 'eth_requestAccounts'})[0])
                 }
