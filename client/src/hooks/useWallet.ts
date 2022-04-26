@@ -86,6 +86,10 @@ export const useWallet = () => {
             return;
         }
         try {
+            await provider.request({
+                method: 'wallet_switchEthereumChain',
+                params: [{ chainId: import.meta.env.VITE_CHAINID }]
+            })
             const accounts = await provider.request({ method: 'eth_requestAccounts' });
             setWalletAddress(accounts[0])
             setChainId(provider.chainId);
@@ -253,14 +257,21 @@ export const useWallet = () => {
                 }
 
                 const handleChainChanged = async (chainId: string) => {
-                    setChainId(chainId);
+                    provider.request({
+                        method: 'wallet_switchEthereumChain',
+                        params: [{ chainId: import.meta.env.VITE_CHAINID }]
+                    })
                     setWalletAddress(provider.request({method: 'eth_requestAccounts'})[0])
                 }
 
                 const handleAccountsChanged = async (accounts: string[]) => {
                     if (accounts.length > 0) {
-                        setWalletAddress(accounts[0]);
-                        setChainId(provider.chainId);
+                        setAccessToken('');
+                        setWalletAddress('');
+                        setChainId('');
+                        setChainId('');
+                        setWalletAddress('');
+                        setWalletProvider('');
                     }
                 };
 
