@@ -22,7 +22,7 @@ export const IsAccount = () => {
         })
         .then(data => data.json())
         .then(data => {
-            if (data.users.length) {
+            if (data.users[0].isContract) {
                 setUser(true)
             } else {
                 setUser(false)

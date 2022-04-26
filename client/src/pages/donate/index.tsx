@@ -47,11 +47,13 @@ export default function Donate(): JSX.Element {
 
     const pay = async() => {
         if (!kinds && !amount) {
-            console.log('Please Select Token');
+            // console.log('Please Select Token');
+            alert('Please Select Token');
             return;
         }
         if (amount < kinds!.min) {
-            console.log('最低金額以下になっています');
+            // console.log('最低金額以下になっています');
+            alert('最低金額以下になっています');
             return;
         }
         // 最低amount数をtokenAPIから
@@ -90,8 +92,8 @@ export default function Donate(): JSX.Element {
             <div className="w-full max-w-screen-md px-8 p-12 m-auto">
                 <div className="w-full shadow-lg p-3 sm:p-12">
                     <div className="py-2 flex items-center">
-                        <img className="w-20 h-20 rounded-full" src="https://secure-dcdn.cdn.nimg.jp/nicoaccount/usericon/s/371/3718143.jpg?1555511044" alt="" />
-                        <div className="text-xl font-bold ml-5">がつ</div>
+                        <img className="w-20 h-20 rounded-full" src='https://avataaars.io/?avatarStyle=Circle&topType=LongHairFrida&accessoriesType=Blank&facialHairType=BeardMedium&facialHairColor=Auburn&clotheType=ShirtCrewNeck&clotheColor=PastelRed&eyeType=Side&eyebrowType=DefaultNatural&mouthType=Smile&skinColor=Light' alt="" />
+                        <div className="text-xl font-bold ml-5">{params.id}</div>
                     </div>
                     <div className="py-2">
                         <label htmlFor="small-input" className="block mb-2 text-sm font-medium text-gray-900 dark:text-gray-600">USERNAME</label>
